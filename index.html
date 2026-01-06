@@ -3,283 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cost of Inaction Calculator</title>
+    <title>Next-Gen ROI Analyzer</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --danger: #dc2626;
-            --success: #16a34a;
+            --primary: #0f172a; /* Dark Navy */
+            --accent: #3b82f6; /* Bright Blue */
+            --danger: #ef4444; /* Red */
+            --success: #10b981; /* Green */
             --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-light: #94a3b8;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background-color: var(--bg);
-            color: var(--text);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             display: flex;
             justify-content: center;
-            min-height: 100vh;
         }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            background: var(--card);
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            overflow: hidden;
+        .dashboard {
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+            max-width: 1100px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
-        @media (max-width: 768px) {
-            .container { grid-template-columns: 1fr; }
-        }
-
-        /* Input Section */
-        .inputs-section {
-            padding: 30px;
+        /* Left Side - Inputs */
+        .inputs-panel {
+            padding: 40px;
+            background: #fff;
             border-right: 1px solid #e2e8f0;
         }
 
-        h1 { margin: 0 0 5px 0; font-size: 24px; color: var(--text); }
-        .subtitle { margin: 0 0 25px 0; color: var(--text-light); font-size: 14px; }
+        h2 { margin-top: 0; font-size: 24px; color: var(--primary); margin-bottom: 10px; }
+        p.subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 30px; }
 
-        .group-title {
+        .section-label {
             font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--primary);
+            letter-spacing: 1.2px;
             font-weight: 700;
-            margin-top: 25px;
+            color: var(--accent);
+            margin-top: 30px;
             margin-bottom: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
         }
 
-        .input-row {
-            margin-bottom: 15px;
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
         }
 
         label {
             display: block;
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--text);
+            margin-bottom: 8px;
+            color: var(--text-main);
         }
 
-        .hint {
-            font-size: 11px;
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper span {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--text-light);
-            font-weight: normal;
+            font-size: 14px;
         }
 
-        input[type="number"] {
+        input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 15px;
-            box-sizing: border-box;
+            padding: 12px 12px 12px 30px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--primary);
             transition: all 0.2s;
+            box-sizing: border-box;
         }
 
-        input[type="number"]:focus {
+        input:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: var(--accent);
+            background: #f8fafc;
         }
 
-        /* Results Section */
-        .results-section {
-            background-color: #f1f5f9;
-            padding: 30px;
+        /* Right Side - Visuals */
+        .visuals-panel {
+            padding: 40px;
+            background: #f1f5f9;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .result-card {
+        .metric-card {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--danger);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
         }
 
-        .result-card.success { border-left-color: var(--success); }
-        .result-card.neutral { border-left-color: var(--primary); }
+        .metric-title { font-size: 13px; color: var(--text-light); font-weight: 600; text-transform: uppercase; }
+        .metric-value { font-size: 32px; font-weight: 800; color: var(--primary); margin: 5px 0; }
+        .metric-sub { font-size: 13px; color: var(--text-light); }
 
-        .result-label { font-size: 12px; color: var(--text-light); text-transform: uppercase; font-weight: 600; }
-        .result-value { font-size: 24px; font-weight: 700; color: var(--text); margin-top: 5px; }
+        .metric-value.danger { color: var(--danger); }
+        .metric-value.success { color: var(--success); }
+
+        /* Bars visualization */
+        .comparison-chart {
+            margin-top: 30px;
+        }
         
-        .big-impact {
-            margin-top: 20px;
-            text-align: center;
+        .bar-container {
+            margin-bottom: 20px;
         }
         
-        .big-impact .value {
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--danger);
-            line-height: 1.1;
-        }
-
-        .big-impact .label {
-            font-size: 14px;
-            color: var(--text-light);
-            margin-top: 5px;
-        }
-
-        .action-btn {
-            margin-top: auto;
-            background: var(--text);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            cursor: pointer;
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
             font-weight: 600;
-            transition: background 0.2s;
+            margin-bottom: 8px;
         }
-        .action-btn:hover { background: #000; }
 
+        .bar-track {
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 6px;
+        }
+
+        .bar-fill.red { background: var(--danger); }
+        .bar-fill.blue { background: var(--accent); }
+
+        .big-reveal {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            border: 2px dashed var(--danger);
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        @media (max-width: 900px) {
+            .dashboard { grid-template-columns: 1fr; }
+            .visuals-panel { order: -1; } /* Show results first on mobile? Or keep bottom based on preference */
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="inputs-section">
-        <h1>Operational ROI Calculator</h1>
-        <p class="subtitle">Analyze the cost of staying with your current legacy system.</p>
+<div class="dashboard">
+    <div class="inputs-panel">
+        <h2>Efficiency Gap Analyzer</h2>
+        <p class="subtitle">Enter current metrics to reveal the cost of legacy infrastructure.</p>
 
-        <div class="group-title">1. Maintenance Reality (Annual)</div>
-        <div class="input-row">
-            <label>Service Calls per Year</label>
-            <input type="number" id="serviceCalls" value="12" placeholder="e.g. 15">
+        <div class="section-label">1. Service & Downtime</div>
+        <div class="input-group">
+            <label>Annual Service Calls</label>
+            <div class="input-wrapper">
+                <span>#</span>
+                <input type="number" id="serviceCalls" value="12" oninput="calculate()">
+            </div>
         </div>
-        <div class="input-row">
-            <label>Avg. Cost per Call <span class="hint">(Technician, Travel, Parts)</span></label>
-            <input type="number" id="costPerCall" value="800" placeholder="$">
-        </div>
-
-        <div class="group-title">2. Operational Downtime</div>
-        <div class="input-row">
-            <label>Downtime Hours per Month <span class="hint">(Unplanned)</span></label>
-            <input type="number" id="downtimeHours" value="4" placeholder="Hours">
-        </div>
-        <div class="input-row">
-            <label>Cost per Hour <span class="hint">(Labor + Lost Opportunity)</span></label>
-            <input type="number" id="downtimeCost" value="250" placeholder="$">
+        <div class="input-group">
+            <label>Avg. Cost per Event (Tech + Downtime)</label>
+            <div class="input-wrapper">
+                <span>$</span>
+                <input type="number" id="costPerCall" value="1200" oninput="calculate()">
+            </div>
         </div>
 
-        <div class="group-title">3. Material & Waste Efficiency</div>
-        <div class="input-row">
-            <label>Annual Material Spend <span class="hint">(Total Budget)</span></label>
-            <input type="number" id="materialSpend" value="500000" placeholder="$">
+        <div class="section-label">2. Material Efficiency</div>
+        <div class="input-group">
+            <label>Annual Material Budget</label>
+            <div class="input-wrapper">
+                <span>$</span>
+                <input type="number" id="materialSpend" value="4000000" oninput="calculate()">
+            </div>
         </div>
-        <div class="input-row">
-            <label>Conservative Savings with New System <span class="hint">(e.g. 1% less scrap)</span></label>
-            <input type="number" id="materialSavingsPct" value="1.5" step="0.1" placeholder="%">
+        <div class="input-group">
+            <label>Potential Waste Reduction (Conservative)</label>
+            <div class="input-wrapper">
+                <span>%</span>
+                <input type="number" id="wasteReduction" value="1.5" step="0.1" oninput="calculate()">
+            </div>
         </div>
 
-        <div class="group-title">4. New Solution Investment</div>
-        <div class="input-row">
-            <label>Total Cost of New System</label>
-            <input type="number" id="newSystemCost" value="120000" placeholder="$">
+        <div class="section-label">3. Quality & Re-prints</div>
+        <div class="input-group">
+            <label>Annual Re-print Rate (Estimate)</label>
+            <div class="input-wrapper">
+                <span>%</span>
+                <input type="number" id="reprintRate" value="2" step="0.5" oninput="calculate()">
+            </div>
         </div>
-        <div class="input-row">
-            <label>Lifespan Calculation (Years)</label>
-            <input type="number" id="lifespan" value="5" placeholder="Years">
+        
+        <div class="section-label">4. The Solution</div>
+        <div class="input-group">
+            <label>Annualized Cost of New System</label>
+            <div class="input-wrapper">
+                <span>$</span>
+                <input type="number" id="newSystemCost" value="24000" oninput="calculate()">
+            </div>
         </div>
     </div>
 
-    <div class="results-section">
-        <div class="result-card">
-            <div class="result-label">Current "Bleeding" (Annual)</div>
-            <div class="result-value" id="currentBleeding">$0</div>
-            <div style="font-size:11px; color:#64748b; margin-top:5px;">Service + Downtime + Waste</div>
+    <div class="visuals-panel">
+        
+        <div class="metric-card">
+            <div class="metric-title">Current Annual Bleeding</div>
+            <div class="metric-value danger" id="totalBleed">$0</div>
+            <div class="metric-sub">Maintenance + Material Waste + Re-prints</div>
         </div>
 
-        <div class="result-card neutral">
-            <div class="result-label">New System (Annualized)</div>
-            <div class="result-value" id="newSystemAnnual">$0</div>
+        <div class="comparison-chart">
+            <div class="bar-container">
+                <div class="bar-label">
+                    <span>Cost of Staying (Old System)</span>
+                    <span id="labelOld">$0</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill red" id="barOld"></div>
+                </div>
+            </div>
+
+            <div class="bar-container">
+                <div class="bar-label">
+                    <span>Cost of Upgrading (New System)</span>
+                    <span id="labelNew">$0</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill blue" id="barNew"></div>
+                </div>
+            </div>
         </div>
 
-        <div class="big-impact">
-            <div class="label">COST OF INACTION</div>
-            <div class="value" id="netLoss">$0</div>
-            <div class="label">Lost every single year by not upgrading</div>
+        <div class="big-reveal">
+            <div class="metric-title" style="color:var(--danger)">NET ANNUAL LOSS</div>
+            <div class="metric-value danger" id="netLoss" style="font-size: 42px;">$0</div>
+            <div class="metric-sub">Money you lose every year by NOT upgrading</div>
+        </div>
+        
+        <div style="margin-top: 20px; font-size: 12px; color: #94a3b8; text-align: center;">
+            *Calculations based on provided operational data.
         </div>
 
-        <button class="action-btn" onclick="window.print()">Print / Save PDF</button>
     </div>
 </div>
 
 <script>
-    // Elements
-    const inputs = document.querySelectorAll('input');
-    
-    function formatCurrency(num) {
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
+    function formatMoney(amount) {
+        return '$' + amount.toLocaleString('en-US', {maximumFractionDigits: 0});
     }
 
     function calculate() {
-        // 1. Service Costs
+        // 1. Service Pain
         const calls = parseFloat(document.getElementById('serviceCalls').value) || 0;
         const costPerCall = parseFloat(document.getElementById('costPerCall').value) || 0;
-        const annualServiceCost = calls * costPerCall;
+        const serviceTotal = calls * costPerCall;
 
-        // 2. Downtime Costs
-        const downHours = parseFloat(document.getElementById('downtimeHours').value) || 0;
-        const costPerHour = parseFloat(document.getElementById('downtimeCost').value) || 0;
-        const annualDowntimeCost = downHours * costPerHour * 12;
-
-        // 3. Material Savings (Opportunity Cost)
+        // 2. Material Waste Pain
         const materialSpend = parseFloat(document.getElementById('materialSpend').value) || 0;
-        const savingsPct = parseFloat(document.getElementById('materialSavingsPct').value) || 0;
-        const annualMaterialWaste = materialSpend * (savingsPct / 100);
+        const wasteRedPct = parseFloat(document.getElementById('wasteReduction').value) || 0;
+        const wasteTotal = materialSpend * (wasteRedPct / 100);
 
-        // Total Current Pain
-        const totalCurrentPain = annualServiceCost + annualDowntimeCost + annualMaterialWaste;
+        // 3. Re-Print Pain (Using the Material Spend as base for simplicity, or we could add specific reprint cost)
+        // Logic: Re-prints cost material + press time. Let's be conservative and say it costs 1.5x the material cost due to labor/machine time.
+        const reprintRate = parseFloat(document.getElementById('reprintRate').value) || 0;
+        // If we assume Reprint Rate applies to the Total Material Spend:
+        // A 2% reprint rate on $4M material means $80k material wasted + Machine Time.
+        // Let's multiply by 1.2 to account for minimal machine time on top of material.
+        const reprintTotal = (materialSpend * (reprintRate / 100)) * 1.2; 
+        // Note: This logic simplifies the Excel's detailed breakdown but keeps the impact high.
 
-        // 4. New System Cost
-        const systemCost = parseFloat(document.getElementById('newSystemCost').value) || 0;
-        const lifespan = parseFloat(document.getElementById('lifespan').value) || 1;
-        const annualizedSystemCost = systemCost / lifespan;
+        // Total Old Cost
+        const totalBleed = serviceTotal + wasteTotal + reprintTotal;
 
-        // 5. Net Loss (Cost of Inaction)
-        // Logic: (Money you lose today) - (Cost of new system per year)
-        // If positive, it means you LOSE money by waiting.
-        const netLoss = totalCurrentPain - annualizedSystemCost;
+        // New System Cost
+        const newCost = parseFloat(document.getElementById('newSystemCost').value) || 0;
 
-        // Update UI
-        document.getElementById('currentBleeding').innerText = formatCurrency(totalCurrentPain);
-        document.getElementById('newSystemAnnual').innerText = formatCurrency(annualizedSystemCost);
+        // Net Loss
+        const netLoss = totalBleed - newCost;
+
+        // Update UI Text
+        document.getElementById('totalBleed').innerText = formatMoney(totalBleed);
+        document.getElementById('labelOld').innerText = formatMoney(totalBleed);
+        document.getElementById('labelNew').innerText = formatMoney(newCost);
         
         const netLossEl = document.getElementById('netLoss');
         if (netLoss > 0) {
-            netLossEl.innerText = formatCurrency(netLoss);
-            netLossEl.style.color = "#dc2626"; // Red
+            netLossEl.innerText = formatMoney(netLoss);
+            netLossEl.style.color = "#ef4444";
+            document.querySelector('.big-reveal').style.borderColor = "#ef4444";
+            document.querySelector('.big-reveal').style.background = "rgba(239, 68, 68, 0.05)";
         } else {
-            netLossEl.innerText = "Savings Achieved";
-            netLossEl.style.color = "#16a34a"; // Green
+            netLossEl.innerText = "SAVING: " + formatMoney(Math.abs(netLoss));
+            netLossEl.style.color = "#10b981";
+            document.querySelector('.big-reveal').style.borderColor = "#10b981";
+            document.querySelector('.big-reveal').style.background = "rgba(16, 185, 129, 0.05)";
+        }
+
+        // Update Bars Animation
+        // Find the max value to set scale (add 10% buffer)
+        const maxVal = Math.max(totalBleed, newCost) * 1.1;
+        
+        if (maxVal > 0) {
+            document.getElementById('barOld').style.width = (totalBleed / maxVal * 100) + '%';
+            document.getElementById('barNew').style.width = (newCost / maxVal * 100) + '%';
         }
     }
 
-    // Event Listeners
-    inputs.forEach(input => {
-        input.addEventListener('input', calculate);
-    });
-
-    // Initial run
+    // Init
     calculate();
 </script>
 
